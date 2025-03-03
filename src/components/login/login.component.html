@@ -1,0 +1,18 @@
+<form [formGroup]="signInForm" (submit)="logIn()">
+    <div class="formGroup">
+        <label for="email">email: </label>
+        <input class="form-control" type="email" name="email" id="email" formControlName="email">
+    </div>
+    @if(this.signInForm.get('email')?.invalid && signInForm.get('email')?.touched){
+    <small>email is required</small>
+    }
+    <div class="formGroup">
+        <label for="password">password: </label>
+        <input class="form-control" type="text" name="password" id="password" formControlName="password">
+    </div>
+    @if(this.signInForm.get('password')?.invalid && signInForm.get('password')?.touched){
+    <small>password is required</small>
+    }
+    <button [disabled]="this.signInForm.invalid" type="submit">submit</button>
+</form>
+<a routerLink="/register">don't have an account sing up</a>

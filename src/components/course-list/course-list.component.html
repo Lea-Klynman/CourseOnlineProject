@@ -1,0 +1,14 @@
+@for(course of courses$ | async ; track course.id){
+    {{course.id}} - {{course.title}}
+    @if(getAuthServiceRole() == "student"){
+<button (click)="enroll(course)">Enroll</button>
+    }
+    @if(getAuthServiceRole() == "teacher"){
+<button (click)="update(course)">Update</button>
+<button (click)="delete(course.id)">Delete</button>
+    }
+}
+
+@if(getAuthServiceRole() == "teacher"){
+<button (click)="add()">Add course</button>
+}
