@@ -18,6 +18,7 @@ export class CourseService {
     this.myCoursesBehaviorSubject.asObservable();
   constructor(private http: HttpClient ,private authService: AuthService) { 
     this.getCourses();
+    this.getStuentCourses(this.authService.userId);
   }
 
   // GET all courses
@@ -55,10 +56,10 @@ export class CourseService {
   deleteCourse(id: number): Observable<any> {
     console.log("service.deleteCourse");
     
-    return this.http.delete(`${this.apiUrl}/${id}`).pipe(tap(() => {this.getCourses();
-      console.log("succed delett");
-      
-    }));
+    const res= this.http.delete(`${this.apiUrl}/${id}`);
+    res.subscribe(() => {this.getCourses();  
+    });
+    return res;
   }
 
 
