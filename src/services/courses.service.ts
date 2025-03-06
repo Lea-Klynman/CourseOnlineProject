@@ -71,7 +71,7 @@ export class CourseService {
 
   unenroll(courseId: number,userId: number): void { 
     console.log(userId);  
-     this.http.post(`${this.apiUrl}/${courseId}/unenroll`,  {body: {userId}} )
+     this.http.delete(`${this.apiUrl}/${courseId}/unenroll`,  {body: {userId}} )
      .subscribe(()=> {
         this.getStuentCourses(userId)
       });
