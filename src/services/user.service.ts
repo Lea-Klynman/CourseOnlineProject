@@ -14,31 +14,19 @@ export class UserService {
   
 
   getUsers(): Observable<any> {
-    const token = this.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get(`${this.apiUrl}/users`, { headers });
+    return this.http.get(`${this.apiUrl}/users`);
   }
 
   getUserById(id: number): Observable<any> {
-    const token = this.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get(`${this.apiUrl}/users/${id}`, { headers });
+    return this.http.get(`${this.apiUrl}/users/${id}`);
   }
 
   updateUser(id: number, user: { name: string; email: string; password: string; role: string }): Observable<any> {
-    const token = this.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.put(`${this.apiUrl}/users/${id}`, user, { headers });
+    return this.http.put(`${this.apiUrl}/users/${id}`, user);
   }
 
   deleteUser(id: number): Observable<any> {
-    const token = this.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.delete(`${this.apiUrl}/users/${id}`, { headers });
-  }
-
-  private getToken(): string | null {
-    return localStorage.getItem('token');
+    return this.http.delete(`${this.apiUrl}/users/${id}`);
   }
 
 }

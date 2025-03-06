@@ -1,65 +1,76 @@
 import { Component, inject } from '@angular/core';
 import { CourseService } from '../../services/courses.service';
 import { Course } from '../../models/course';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { IconPipe } from "../../app/pipe/icon.pipe";
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-course-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconPipe, TableModule],
   templateUrl: './course-list.component.html',
   styleUrl: './course-list.component.css'
 })
 export class CourseListComponent {
-courses$ :Observable<Course[]>;
+  courses!: Course[];
+  studentCourses!: Course[];
   router = inject(Router);
+  
 
-constructor(private coursesService: CourseService,private authService: AuthService){
-this.courses$ = this.coursesService.getCourses(); 
-}
+  constructor(private coursesService: CourseService, private authService: AuthService) {
+  }
+
+  ngOnInit() {
+    this.coursesService.getCourses();
+    this.coursesService.courses$.subscribe(courses => {
+      this.courses = courses;
+      console.log(this.courses);
+    });
+  }
+  getAuthServiceRole(): string {
+    return this.authService.role;
+  }
 
 
-public getAuthServiceRole(): string {
-  return this.authService.role;
-}
+  enroll(courseId: number) {
+    this.coursesService.enroll(courseId, this.authService.userId)
+  }
+
+  unenroll(courseId: number) {
+    this.coursesService.unenroll(courseId, this.authService.userId)
+  
+  }
 
 
-enroll(course: Course){
-  this.coursesService.enroll(course.id,this.authService.userId).subscribe({
-    next: () => {
-      this.courses$ = this.coursesService.getCourses();
-      console.log("enroll successful");
-      
-    },
-    error: () => {
-      console.log("enroll failed");
-    }
-  });
-}
+ 
+  isEnrolled(courseId: number): Observable<boolean> {
+    return this.coursesService.isEnrolled(courseId).pipe(
+      map((result) => {
+        console.log(`Is enrolled in course ${courseId}: ${result}`);
+        return result;
+      })
+    );
+  }
+  update(course: Course) {
+    this.router.navigate(['/update-course', course.id]);
+  }
+  showCourse(courseid: number) {
+    this.router.navigate(['/course', courseid]);
+  }
 
-update(course: Course){
-  this.router.navigate(['/update-course', course.id]);
-}
+  deleteCourse(id: number) {
+    this.coursesService.deleteCourse(id)
+    console.log("delete course");
+    
+  }
 
-delete(id: number){
-  this.coursesService.deleteCourse(id).subscribe({
-    next: () => {
-      this.courses$ = this.coursesService.getCourses();
-      console.log("delete successful");
-      
-    },
-    error: () => {
-      console.log("delete failed");
-    }
-  })
-}
-
-add(){
-  const userId = this.authService.userId;
-  this.router.navigate(['/add-course', userId]);
-}
+  add() {
+    const userId = this.authService.userId;
+    this.router.navigate(['/add-course', userId]);
+  }
 
 }
